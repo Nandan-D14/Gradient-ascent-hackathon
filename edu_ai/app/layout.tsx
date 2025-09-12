@@ -1,4 +1,9 @@
- import type { Metadata } from "next";
+
+
+import type { Metadata } from "next";
+import React from "react";
+import ChatbotWidget from "../component/ChatbotWidget";
+
 
 export const metadata: Metadata = {
   title: "Concept Master",
@@ -31,6 +36,7 @@ export default function RootLayout({
       </head>
       <body className="bg-white text-gray-900">
         {children}
+        <ChatbotWidget />
       </body>
     </html>
   );
