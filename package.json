@@ -1,0 +1,8 @@
+{
+  "dependencies": {
+    "@google/generative-ai": "^0.24.1",
+    "@react-oauth/google": "^0.12.2",
+    "googleapis": "^159.0.0",
+    "multer": "^2.0.2"
+  }
+}
