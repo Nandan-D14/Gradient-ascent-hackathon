@@ -1,4 +1,5 @@
 import React from 'react';
+import Link from 'next/link';
 
 const LandingPage = () => {
   return (
@@ -13,16 +14,17 @@ const LandingPage = () => {
               <h2 className="text-lg font-semibold tracking-tight">Concept Master</h2>
             </div>
             <nav className="hidden items-center gap-6 text-sm font-medium md:flex">
-              <a className="text-gray-600 hover:text-gray-900 transition-colors" href="#">Features</a>
+              <a className="text-gray-600 hover:text-gray-900 transition-colors" href="#features">Features</a>
               <a className="text-gray-600 hover:text-gray-900 transition-colors" href="#">Pricing</a>
               <a className="text-gray-600 hover:text-gray-900 transition-colors" href="#">Blog</a>
+              <Link className="text-gray-600 hover:text-gray-900 transition-colors" href="/">Dashboard</Link>
               <a className="text-gray-600 hover:text-gray-900 transition-colors" href="#">Contact</a>
             </nav>
             <div className="flex items-center gap-4">
-              <a className="hidden sm:inline-block text-sm font-medium text-gray-600 hover:text-gray-900 transition-colors" href="#">Log In</a>
-              <a className="inline-flex h-9 items-center justify-center rounded-md bg-gray-900 px-4 text-sm font-medium text-white transition-colors hover:bg-gray-800" href="#">
+              <Link className="hidden sm:inline-block text-sm font-medium text-gray-600 hover:text-gray-900 transition-colors" href="/">Log In</Link>
+              <Link className="inline-flex h-9 items-center justify-center rounded-md bg-gray-900 px-4 text-sm font-medium text-white transition-colors hover:bg-gray-800" href="/">
                 Start Learning
-              </a>
+              </Link>
               <button className="md:hidden">
                 <span className="material-symbols-outlined">menu</span>
               </button>
@@ -50,9 +52,9 @@ const LandingPage = () => {
                 </p>
               </div>
               <div className="mt-10 flex flex-wrap justify-center gap-4">
-                <a className="inline-flex h-12 items-center justify-center rounded-md bg-gray-900 px-6 text-base font-medium text-white shadow-sm transition-colors hover:bg-gray-800" href="#">
+                <Link className="inline-flex h-12 items-center justify-center rounded-md bg-gray-900 px-6 text-base font-medium text-white shadow-sm transition-colors hover:bg-gray-800" href="/">
                   Start Learning
-                </a>
+                </Link>
                 <a className="inline-flex h-12 items-center justify-center rounded-md border border-gray-200 bg-white px-6 text-base font-medium text-gray-900 shadow-sm transition-colors hover:bg-gray-50" href="#features">
                   Explore Features
                 </a>
