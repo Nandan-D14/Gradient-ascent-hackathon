@@ -18,7 +18,7 @@ const LandingPage = () => {
               <a className="text-gray-600 hover:text-gray-900 transition-colors" href="#features">Features</a>
               <a className="text-gray-600 hover:text-gray-900 transition-colors" href="#">Pricing</a>
               <a className="text-gray-600 hover:text-gray-900 transition-colors" href="#">Blog</a>
-              <Link className="text-gray-600 hover:text-gray-900 transition-colors" href="/">Dashboard</Link>
+              <Link className="text-gray-600 hover:text-gray-900 transition-colors" href="/dashboard">Dashboard</Link>
               <a className="text-gray-600 hover:text-gray-900 transition-colors" href="#">Contact</a>
             </nav>
             <div className="flex items-center gap-4">
