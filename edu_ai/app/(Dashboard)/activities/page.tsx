@@ -57,7 +57,6 @@ const ActivitiesPage = () => (
         ))}
       </div>
     </main>
-  </div>
 );
 
 export default ActivitiesPage;
