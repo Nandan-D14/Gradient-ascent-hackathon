@@ -1,3 +1,4 @@
+"use client";
 import React, { useState } from "react";
 
 // Material Symbols font import for Next.js
