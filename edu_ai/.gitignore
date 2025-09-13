@@ -39,3 +39,20 @@ yarn-error.log*
 # typescript
 *.tsbuildinfo
 next-env.d.ts
+Failed to fetch
+
+app/(Dashboard)/notes/page.tsx (131:31) @ handleFileChange
+
+
+  129 |       const formData = new FormData();
+  130 |       formData.append("file", file);
+> 131 |       const uploadRes = await fetch("http://localhost:5000/api/upload_pdf", {
+      |                               ^
+  132 |         method: "POST",
+  133 |         body: formData,
+  134 |       });
+Call Stack
+9
+
+Show 8 ignore-listed frame(s)
+handleFileChange

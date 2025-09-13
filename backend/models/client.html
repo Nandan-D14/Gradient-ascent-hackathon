@@ -1,0 +1,560 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>RAG PDF Client</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 20px;
+            box-shadow: 0 20px 40px rgba(0,0,0,0.1);
+            overflow: hidden;
+        }
+
+        .header {
+            background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);
+            color: white;
+            padding: 30px;
+            text-align: center;
+        }
+
+        .header h1 {
+            font-size: 2.5em;
+            margin-bottom: 10px;
+            font-weight: 300;
+        }
+
+        .header p {
+            font-size: 1.2em;
+            opacity: 0.9;
+        }
+
+        .main-content {
+            padding: 40px;
+        }
+
+        .server-config {
+            background: #f8f9ff;
+            padding: 20px;
+            border-radius: 15px;
+            margin-bottom: 30px;
+        }
+
+        .config-group {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 15px;
+            align-items: center;
+        }
+
+        .config-group label {
+            min-width: 100px;
+            font-weight: bold;
+        }
+
+        .config-group input {
+            flex: 1;
+            padding: 10px;
+            border: 2px solid #ddd;
+            border-radius: 10px;
+            font-size: 1em;
+        }
+
+        .test-btn {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 10px 20px;
+            border: none;
+            border-radius: 10px;
+            cursor: pointer;
+            font-size: 1em;
+        }
+
+        .test-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(102, 126, 234, 0.3);
+        }
+
+        .upload-section {
+            text-align: center;
+            padding: 40px;
+            border: 2px dashed #ddd;
+            border-radius: 15px;
+            margin-bottom: 30px;
+            transition: all 0.3s ease;
+        }
+
+        .upload-section:hover {
+            border-color: #4facfe;
+            background: #f8f9ff;
+        }
+
+        .upload-section.dragover {
+            border-color: #4facfe;
+            background: #f0f8ff;
+        }
+
+        .file-input {
+            display: none;
+        }
+
+        .upload-btn {
+            background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);
+            color: white;
+            padding: 15px 30px;
+            border: none;
+            border-radius: 50px;
+            font-size: 1.1em;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            margin: 10px;
+        }
+
+        .upload-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 20px rgba(79, 172, 254, 0.3);
+        }
+
+        .summary-section {
+            background: #f8f9ff;
+            padding: 30px;
+            border-radius: 15px;
+            margin-bottom: 30px;
+        }
+
+        .summary-btn {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 15px 30px;
+            border: none;
+            border-radius: 50px;
+            font-size: 1.1em;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            margin-bottom: 20px;
+        }
+
+        .summary-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 20px rgba(102, 126, 234, 0.3);
+        }
+
+        .qa-section {
+            background: #f8f9ff;
+            padding: 30px;
+            border-radius: 15px;
+        }
+
+        .input-group {
+            display: flex;
+            margin-bottom: 20px;
+        }
+
+        .question-input {
+            flex: 1;
+            padding: 15px;
+            border: 2px solid #ddd;
+            border-radius: 50px 0 0 50px;
+            font-size: 1.1em;
+            outline: none;
+            transition: all 0.3s ease;
+        }
+
+        .question-input:focus {
+            border-color: #4facfe;
+            box-shadow: 0 0 0 3px rgba(79, 172, 254, 0.1);
+        }
+
+        .ask-btn {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 15px 30px;
+            border: none;
+            border-radius: 0 50px 50px 0;
+            font-size: 1.1em;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .ask-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 20px rgba(102, 126, 234, 0.3);
+        }
+
+        .response {
+            background: white;
+            padding: 20px;
+            border-radius: 15px;
+            margin-top: 20px;
+            border-left: 4px solid #4facfe;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+        }
+
+        .response h3 {
+            color: #333;
+            margin-bottom: 10px;
+        }
+
+        .response p {
+            color: #666;
+            line-height: 1.6;
+        }
+
+        .loading {
+            display: none;
+            text-align: center;
+            padding: 20px;
+        }
+
+        .spinner {
+            border: 4px solid #f3f3f3;
+            border-top: 4px solid #4facfe;
+            border-radius: 50%;
+            width: 40px;
+            height: 40px;
+            animation: spin 1s linear infinite;
+            margin: 0 auto 10px;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        .error {
+            background: #ffe6e6;
+            color: #d63031;
+            padding: 15px;
+            border-radius: 10px;
+            margin: 10px 0;
+            border-left: 4px solid #d63031;
+        }
+
+        .success {
+            background: #e6f7e6;
+            color: #00b894;
+            padding: 15px;
+            border-radius: 10px;
+            margin: 10px 0;
+            border-left: 4px solid #00b894;
+        }
+
+        .status-indicator {
+            display: inline-block;
+            width: 12px;
+            height: 12px;
+            border-radius: 50%;
+            margin-right: 8px;
+        }
+
+        .status-online {
+            background: #00b894;
+        }
+
+        .status-offline {
+            background: #d63031;
+        }
+
+        @media (max-width: 768px) {
+            .container {
+                margin: 10px;
+                border-radius: 15px;
+            }
+            
+            .main-content {
+                padding: 20px;
+            }
+            
+            .input-group {
+                flex-direction: column;
+            }
+            
+            .question-input {
+                border-radius: 50px;
+                margin-bottom: 10px;
+            }
+            
+            .ask-btn {
+                border-radius: 50px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>🤖 RAG PDF Client</h1>
+            <p>Connect to your RAG server and analyze PDF documents</p>
+            <div id="status">
+                <span class="status-indicator status-offline"></span>
+                <span id="status-text">Not connected</span>
+            </div>
+        </div>
+
+        <div class="main-content">
+            <!-- Server Configuration -->
+            <div class="server-config">
+                <h3>🔧 Server Configuration</h3>
+                <div class="config-group">
+                    <label>Server IP:</label>
+                    <input type="text" id="serverIp" value="10.7.19.144" placeholder="Enter server IP address">
+                </div>
+                <div class="config-group">
+                    <label>Port:</label>
+                    <input type="text" id="serverPort" value="5000" placeholder="Enter server port">
+                </div>
+                <button class="test-btn" onclick="testConnection()">Test Connection</button>
+                <div id="connectionStatus"></div>
+            </div>
+
+            <!-- Upload Section -->
+            <div class="upload-section" id="uploadArea">
+                <h3>📁 Upload PDF Document</h3>
+                <p>Drag and drop your PDF file here or click to browse</p>
+                <input type="file" id="fileInput" class="file-input" accept=".pdf">
+                <button class="upload-btn" onclick="document.getElementById('fileInput').click()">
+                    Choose PDF File
+                </button>
+                <div id="uploadStatus"></div>
+            </div>
+
+            <!-- Summary Section -->
+            <div class="summary-section">
+                <h3>📝 Document Summary</h3>
+                <p>Generate a comprehensive summary of the uploaded document</p>
+                <button class="summary-btn" onclick="generateSummary()">
+                    Generate Summary
+                </button>
+                <div class="loading" id="summaryLoading">
+                    <div class="spinner"></div>
+                    <p>Generating summary...</p>
+                </div>
+                <div id="summaryResult"></div>
+            </div>
+
+            <!-- Q&A Section -->
+            <div class="qa-section">
+                <h3>❓ Ask Questions</h3>
+                <p>Ask any question about the uploaded document</p>
+                <div class="input-group">
+                    <input type="text" id="questionInput" class="question-input" 
+                           placeholder="What would you like to know about this document?">
+                    <button class="ask-btn" onclick="askQuestion()">Ask</button>
+                </div>
+                <div class="loading" id="qaLoading">
+                    <div class="spinner"></div>
+                    <p>Processing your question...</p>
+                </div>
+                <div id="qaResult"></div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        let serverUrl = 'http://10.7.19.144:5000';
+
+        // Update server URL when inputs change
+        document.getElementById('serverIp').addEventListener('input', updateServerUrl);
+        document.getElementById('serverPort').addEventListener('input', updateServerUrl);
+
+        function updateServerUrl() {
+            const ip = document.getElementById('serverIp').value;
+            const port = document.getElementById('serverPort').value;
+            serverUrl = `http://${ip}:${port}`;
+        }
+
+        function testConnection() {
+            const statusElement = document.getElementById('status-text');
+            const indicator = document.querySelector('.status-indicator');
+            const connectionStatus = document.getElementById('connectionStatus');
+            
+            statusElement.textContent = 'Testing connection...';
+            indicator.className = 'status-indicator status-offline';
+            connectionStatus.innerHTML = '';
+
+            fetch(`${serverUrl}/api/status`)
+                .then(response => response.json())
+                .then(data => {
+                    if (data.status === 'success') {
+                        statusElement.textContent = 'Connected to server';
+                        indicator.className = 'status-indicator status-online';
+                        connectionStatus.innerHTML = '<div class="success">✅ Successfully connected to RAG server!</div>';
+                    } else {
+                        statusElement.textContent = 'Server error';
+                        indicator.className = 'status-indicator status-offline';
+                        connectionStatus.innerHTML = '<div class="error">❌ Server error: ' + data.message + '</div>';
+                    }
+                })
+                .catch(error => {
+                    statusElement.textContent = 'Connection failed';
+                    indicator.className = 'status-indicator status-offline';
+                    connectionStatus.innerHTML = '<div class="error">❌ Connection failed: ' + error.message + '</div>';
+                });
+        }
+
+        // File upload handling
+        const uploadArea = document.getElementById('uploadArea');
+        const fileInput = document.getElementById('fileInput');
+
+        uploadArea.addEventListener('dragover', (e) => {
+            e.preventDefault();
+            uploadArea.classList.add('dragover');
+        });
+
+        uploadArea.addEventListener('dragleave', () => {
+            uploadArea.classList.remove('dragover');
+        });
+
+        uploadArea.addEventListener('drop', (e) => {
+            e.preventDefault();
+            uploadArea.classList.remove('dragover');
+            const files = e.dataTransfer.files;
+            if (files.length > 0) {
+                handleFileUpload(files[0]);
+            }
+        });
+
+        fileInput.addEventListener('change', (e) => {
+            if (e.target.files.length > 0) {
+                handleFileUpload(e.target.files[0]);
+            }
+        });
+
+        function handleFileUpload(file) {
+            if (!file.type.includes('pdf')) {
+                showMessage('uploadStatus', 'Please select a PDF file.', 'error');
+                return;
+            }
+
+            const formData = new FormData();
+            formData.append('file', file);
+
+            showMessage('uploadStatus', 'Uploading and processing PDF...', 'success');
+
+            fetch(`${serverUrl}/api/upload`, {
+                method: 'POST',
+                body: formData
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.status === 'success') {
+                    showMessage('uploadStatus', 'PDF processed successfully! You can now generate summaries and ask questions.', 'success');
+                } else {
+                    showMessage('uploadStatus', 'Error: ' + data.message, 'error');
+                }
+            })
+            .catch(error => {
+                showMessage('uploadStatus', 'Upload failed: ' + error.message, 'error');
+            });
+        }
+
+        function generateSummary() {
+            const loadingElement = document.getElementById('summaryLoading');
+            const resultElement = document.getElementById('summaryResult');
+            
+            loadingElement.style.display = 'block';
+            resultElement.innerHTML = '';
+
+            fetch(`${serverUrl}/api/summary`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                }
+            })
+            .then(response => response.json())
+            .then(data => {
+                loadingElement.style.display = 'none';
+                
+                if (data.status === 'success') {
+                    resultElement.innerHTML = `
+                        <div class="response">
+                            <h3>📝 Document Summary</h3>
+                            <p>${data.summary}</p>
+                        </div>
+                    `;
+                } else {
+                    resultElement.innerHTML = `<div class="error">Error: ${data.message}</div>`;
+                }
+            })
+            .catch(error => {
+                loadingElement.style.display = 'none';
+                resultElement.innerHTML = `<div class="error">Error: ${error.message}</div>`;
+            });
+        }
+
+        function askQuestion() {
+            const questionInput = document.getElementById('questionInput');
+            const question = questionInput.value.trim();
+            
+            if (!question) {
+                showMessage('qaResult', 'Please enter a question.', 'error');
+                return;
+            }
+
+            const loadingElement = document.getElementById('qaLoading');
+            const resultElement = document.getElementById('qaResult');
+            
+            loadingElement.style.display = 'block';
+            resultElement.innerHTML = '';
+
+            fetch(`${serverUrl}/api/ask`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({ question: question })
+            })
+            .then(response => response.json())
+            .then(data => {
+                loadingElement.style.display = 'none';
+                
+                if (data.status === 'success') {
+                    resultElement.innerHTML = `
+                        <div class="response">
+                            <h3>❓ Question: ${data.question}</h3>
+                            <p><strong>Answer:</strong> ${data.answer}</p>
+                        </div>
+                    `;
+                } else {
+                    resultElement.innerHTML = `<div class="error">Error: ${data.message}</div>`;
+                }
+            })
+            .catch(error => {
+                loadingElement.style.display = 'none';
+                resultElement.innerHTML = `<div class="error">Error: ${error.message}</div>`;
+            });
+        }
+
+        function showMessage(elementId, message, type) {
+            const element = document.getElementById(elementId);
+            element.innerHTML = `<div class="${type}">${message}</div>`;
+        }
+
+        // Allow Enter key to submit questions
+        document.getElementById('questionInput').addEventListener('keypress', (e) => {
+            if (e.key === 'Enter') {
+                askQuestion();
+            }
+        });
+
+        // Test connection on page load
+        window.addEventListener('load', testConnection);
+    </script>
+</body>
+</html>
