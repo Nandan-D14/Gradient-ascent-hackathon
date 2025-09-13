@@ -1,6 +1,6 @@
 
 "use client";
-import React, { useState } from "react";
+import React, { useState, useRef } from "react";
 
 // Material Symbols font import for Next.js
 const MaterialSymbols = () => (
@@ -102,15 +102,69 @@ const navLinks = [
   { href: "#conclusion", label: "Conclusion" },
 ];
 
+
 const NotesPage = () => {
   const [openChapters, setOpenChapters] = useState<{ [key: string]: boolean }>({ chapter1: true });
   const [openSections, setOpenSections] = useState<{ [key: string]: boolean }>({ limits: false, differentiation: false });
+  const [summary, setSummary] = useState<string>("");
+  const [uploading, setUploading] = useState(false);
+  const [error, setError] = useState<string>("");
+  const fileInputRef = useRef<HTMLInputElement | null>(null);
 
   const toggleChapter = (id: string) => {
     setOpenChapters((prev) => ({ ...prev, [id]: !prev[id] }));
   };
   const toggleSection = (id: string) => {
     setOpenSections((prev) => ({ ...prev, [id]: !prev[id] }));
+  };
+
+  const handleFileChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+    setUploading(true);
+    setError("");
+    setSummary("");
+    try {
+      // Upload PDF to backend
+      const formData = new FormData();
+      formData.append("file", file);
+      const uploadRes = await fetch("http://localhost:5000/api/upload_pdf", {
+        method: "POST",
+        body: formData,
+      });
+      if (!uploadRes.ok) {
+        const text = await uploadRes.text();
+        setError(`Upload failed: ${text}`);
+        setUploading(false);
+        return;
+      }
+      const uploadData = await uploadRes.json();
+      if (uploadData.status !== "success") {
+        setError(uploadData.message || "Failed to process PDF");
+        setUploading(false);
+        return;
+      }
+      // Fetch summary from backend
+      const summaryRes = await fetch("http://localhost:5000/api/summary", {
+        method: "POST",
+      });
+      if (!summaryRes.ok) {
+        const text = await summaryRes.text();
+        setError(`Summary failed: ${text}`);
+        setUploading(false);
+        return;
+      }
+      const summaryData = await summaryRes.json();
+      if (summaryData.status === "success") {
+        setSummary(summaryData.summary);
+      } else {
+        setError(summaryData.message || "Failed to generate summary");
+      }
+    } catch (err: any) {
+      setError("Error uploading or summarizing file. If running locally, check CORS and backend server status.");
+      console.error(err);
+    }
+    setUploading(false);
   };
 
   return (
@@ -133,20 +187,36 @@ const NotesPage = () => {
           <div className="prose max-w-none">
             <div className="flex items-center justify-between mb-8">
               <div>
-                <p className="text-sm text-[#a3a3a3]">Generated from: 'Advanced Calculus for Engineers.pdf'</p>
-                <h1 className="text-black text-4xl font-bold tracking-tight">AI-Generated Notes: Advanced Calculus</h1>
+                <h1 className="text-black text-4xl font-bold tracking-tight">AI-Generated Notes</h1>
+                <p className="text-sm text-[#a3a3a3]">Upload a PDF to generate notes using RAG</p>
               </div>
               <div className="flex items-center gap-2">
-                <button className="flex items-center gap-2 rounded-md bg-[#f5f5f5] px-3 py-2 text-sm font-medium text-black hover:bg-[#e5e5e5]">
-                  <span className="material-symbols-outlined text-base">content_copy</span>
-                  Copy
+                <button
+                  className="flex items-center gap-2 rounded-md bg-[#f5f5f5] px-3 py-2 text-sm font-medium text-black hover:bg-[#e5e5e5]"
+                  onClick={() => fileInputRef.current?.click()}
+                  disabled={uploading}
+                >
+                  <span className="material-symbols-outlined text-base">upload</span>
+                  {uploading ? "Uploading..." : "Upload PDF"}
                 </button>
-                <button className="flex items-center gap-2 rounded-md bg-[#f5f5f5] px-3 py-2 text-sm font-medium text-black hover:bg-[#e5e5e5]">
-                  <span className="material-symbols-outlined text-base">share</span>
-                  Share
-                </button>
+                <input
+                  ref={fileInputRef}
+                  type="file"
+                  accept="application/pdf"
+                  className="hidden"
+                  onChange={handleFileChange}
+                  disabled={uploading}
+                />
               </div>
             </div>
+            {error && <div className="mb-4 text-red-500 font-medium">{error}</div>}
+            {summary && (
+              <section className="mb-8 p-4 bg-[#f5f5f5] border border-[#262626] rounded-md">
+                <h2 className="text-black text-2xl font-semibold mb-2">Summary</h2>
+                <p className="text-[#525252] whitespace-pre-line">{summary}</p>
+              </section>
+            )}
+            {/* ...existing notes content... */}
             <section id="introduction">
               <h2 className="text-black text-2xl font-semibold border-b border-[#262626] pb-3">Introduction</h2>
               <p className="text-[#a3a3a3]">
@@ -192,4 +262,4 @@ const NotesPage = () => {
   );
 };
 
-export default NotesPage;
+export default NotesPage;python app.py
