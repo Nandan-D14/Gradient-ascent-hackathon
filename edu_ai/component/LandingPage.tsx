@@ -33,9 +33,9 @@ const LandingPage = () => {
           </div>
         </header>
         <main className="flex-1">
-          <div className="absolute inset-0 -z-10 h-full w-full bg-white">
-            <div className="absolute bottom-auto left-auto right-0 top-0 h-[500px] w-[500px] -translate-x-[30%] translate-y-[20%] rounded-full bg-[rgba(173,109,244,0.5)] opacity-50 blur-[80px]"></div>
-          </div>
+          <div className="absolute bottom-auto left-[50%] right-0 top-0 h-[700px] w-[700px] -translate-x-[20%] translate-y-[20%] rounded-full bg-[rgba(173,109,244,0.5)] opacity-50 blur-[80px]"></div>
+          <div className="absolute top-0 -z-10 h-full w-full bg-white">
+          </div>
           <section className="py-24 sm:py-32">
             <div className="container mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 text-center">
               <div className="mx-auto max-w-4xl">
