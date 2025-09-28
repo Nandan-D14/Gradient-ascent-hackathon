@@ -13,6 +13,7 @@ const navLinks = [
             </svg>
         ),
     },
+
     {
         label: "AI Tutor",
         path: "/Tutor",
@@ -139,12 +140,23 @@ export default function DashboardLayout({
                             ))}
                         </nav>
                     </div>
-                    <button className="flex h-10 w-full cursor-pointer items-center justify-center overflow-hidden rounded-md bg-[var(--primary-color)] px-4 text-sm font-bold text-gray-900">
-                        <span className="truncate">Upgrade</span>
-                    </button>
+                    <div className="flex flex-col gap-2">
+                        <Link
+                            href="/profile"
+                            className="flex items-center gap-3 rounded-md px-3 py-2 text-sm font-medium text-gray-500 hover:bg-gray-100 hover:text-gray-900"
+                        >
+                            <svg fill="currentColor" height="24px" viewBox="0 0 256 256" width="24px">
+                                <path d="M128,24A104,104,0,1,0,232,128,104.11,104.11,0,0,0,128,24ZM128,40a88,88,0,1,1-88,88A88.1,88.1,0,0,1,128,40Zm0,144a56,56,0,1,0-56-56A56.06,56.06,0,0,0,128,184Zm0-96a40,40,0,1,1-40,40A40.04,40.04,0,0,1,128,88Zm0,64a24,24,0,1,0-24-24A24.03,24.03,0,0,0,128,152Z"></path>
+                            </svg>
+                            <p>Profile</p>
+                        </Link>
+                        <button className="flex h-10 w-full cursor-pointer items-center justify-center overflow-hidden rounded-md bg-[var(--primary-color)] px-4 text-sm font-bold text-gray-900">
+                            <span className="truncate">Upgrade</span>
+                        </button>
+                    </div>
                 </aside>
                 {/* Main Content */}
-                <main className="flex-1 bg-gray-50 p-6">
+                <main className="flex-1 overflow-y-auto bg-gradient-to-b from-slate-50 via-white to-slate-100 p-6 lg:p-10">
                     {children}
                 </main>
             </div>

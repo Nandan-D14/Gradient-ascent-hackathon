@@ -3,6 +3,8 @@
 import type { Metadata } from "next";
 import React from "react";
 import ChatbotWidget from "../component/ChatbotWidget";
+import { ThemeProvider } from "../contexts/ThemeContext";
+import "./globals.css";
 
 
 export const metadata: Metadata = {
@@ -35,8 +37,10 @@ export default function RootLayout({
         </style>
       </head>
       <body className="bg-white text-gray-900">
-        {children}
-        <ChatbotWidget />
+        <ThemeProvider>
+          {children}
+          <ChatbotWidget />
+        </ThemeProvider>
       </body>
     </html>
   );
