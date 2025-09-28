@@ -12,25 +12,6 @@ const FocusModePage = () => {
   return (
     <div className="relative flex h-auto min-h-screen w-full flex-col group/design-root overflow-x-hidden bg-white" style={{ fontFamily: 'Inter, "Noto Sans", sans-serif' }}>
       <MaterialSymbols />
-      <header className="flex items-center justify-between whitespace-nowrap border-b border-gray-200 px-10 py-3">
-        <div className="flex items-center gap-4 text-gray-900">
-          <div className="size-8 text-[#0d7ff2]">
-            <svg fill="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm0 18c-4.41 0-8-3.59-8-8s3.59-8 8-8 8 3.59 8 8-3.59 8-8 8zm-2-9h4v2h-4v-2zm-2-4h8v2h-8V7z"></path></svg>
-          </div>
-          <h2 className="text-gray-900 text-lg font-bold">StudyAI</h2>
-        </div>
-        <div className="flex items-center gap-6">
-          <span className="inline-flex items-center gap-1 text-sm font-medium text-gray-700">
-            <span className="material-symbols-outlined text-lg text-yellow-500">local_fire_department</span>
-            3 days streak
-          </span>
-          <button className="relative rounded-full p-2 text-gray-600 hover:bg-gray-100 hover:text-gray-800 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-[#0d7ff2]">
-            <span className="material-symbols-outlined">notifications</span>
-            <span className="absolute top-1 right-1 h-3 w-3 rounded-full bg-red-500 border-2 border-white"></span>
-          </button>
-          <div className="bg-center bg-no-repeat aspect-square bg-cover rounded-full size-10" style={{ backgroundImage: 'url("https://lh3.googleusercontent.com/aida-public/AB6AXuALsTi6uf8bjjS3TLX6B4uDCPu_9jszXj1YcdP2Eu5gXnkSRl-EfbHy2xFZOXZjcPxR02VFPiLWPnkbCgw0I-GdhhNx6tiP7crPJXR76F9R1-t43bfkWA8Zm_T8QThZ9SRBg8rdbVOVjFkRMrRcZLAHU8KwgNkjeffinmV-jvrr_3oXNLbRCixJ-ZccVZyoM599bO-WqV8c4MVBc74k4xt1Yijd7poCvHpPX0i7yDPivC8Fr3U2rEoAdIOnP6Wyg7lK8RSk6xhRdPk")' }}></div>
-        </div>
-      </header>
       <main className="flex-1 w-full max-w-4xl mx-auto py-12 px-4 sm:px-6 lg:px-8">
         <div className="flex flex-col items-center">
           <h1 className="text-4xl font-bold text-gray-900">Focus Mode</h1>

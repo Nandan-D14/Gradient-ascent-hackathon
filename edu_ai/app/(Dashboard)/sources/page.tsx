@@ -128,9 +128,38 @@ const SourcesPage = () => {
             </ul>
           </nav>
         </aside>
-        <main className="flex-1 px-8 py-10 md:px-12 lg:px-16 bg-white">
+        <main className="flex-1 space-y-10 bg-white px-8 py-10 md:px-12 lg:px-16">
+          <section className="rounded-3xl border border-gray-200 bg-gradient-to-r from-blue-50 via-white to-blue-50 p-6 shadow-sm">
+            <div className="flex flex-col gap-4 md:flex-row md:items-center md:justify-between">
+              <div className="space-y-1">
+                <h2 className="text-xl font-semibold text-gray-900">Google Drive</h2>
+                <p className="text-sm text-gray-500">Connect your Drive to import study sources instantly.</p>
+              </div>
+              <div className="flex flex-wrap items-center gap-3">
+                <button className="inline-flex items-center gap-2 rounded-full border border-blue-200 bg-white px-4 py-2 text-sm font-semibold text-blue-600 transition hover:bg-blue-50">
+                  <span className="material-symbols-outlined text-base">cloud_done</span>
+                  Manage connection
+                </button>
+                <button className="inline-flex items-center gap-2 rounded-full bg-blue-600 px-5 py-2 text-sm font-semibold text-white shadow-sm transition hover:bg-blue-700">
+                  <span className="material-symbols-outlined text-base">sync</span>
+                  Connect Google Drive
+                </button>
+              </div>
+            </div>
+            <div className="mt-4 grid gap-4 text-sm text-gray-600 md:grid-cols-2">
+              <div className="flex items-center gap-3 rounded-2xl border border-white bg-white/60 px-4 py-3">
+                <span className="material-symbols-outlined text-blue-500">folder_managed</span>
+                <span>Auto-sync starred folders and shared docs.</span>
+              </div>
+              <div className="flex items-center gap-3 rounded-2xl border border-white bg-white/60 px-4 py-3">
+                <span className="material-symbols-outlined text-blue-500">lock</span>
+                <span>Your files stay private. We only store metadata.</span>
+              </div>
+            </div>
+          </section>
+
           <div className="prose max-w-none">
-            <div className="flex items-center justify-between mb-8">
+            <div className="mb-8 flex items-center justify-between">
               <div>
                 <p className="text-sm text-[#a3a3a3]">Generated from: 'Advanced Calculus for Engineers.pdf'</p>
                 <h1 className="text-black text-4xl font-bold tracking-tight">AI-Generated Notes: Advanced Calculus</h1>

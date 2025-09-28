@@ -349,12 +349,12 @@ const TutorPage = () => {
           />
 
           {!hasImportedStudyFile ? (
-            <div className="mx-auto flex h-full max-w-4xl flex-col items-center justify-center rounded-3xl border border-dashed border-blue-300 bg-gradient-to-b from-blue-50 via-white to-blue-50 px-10 py-16 text-center shadow-lg">
-              <div className="mx-auto mb-6 flex h-20 w-20 items-center justify-center rounded-2xl bg-blue-100 text-blue-600">
-                <span className="material-symbols-outlined text-4xl">auto_stories</span>
+            <div className="mx-auto flex max-w-3xl flex-col items-center justify-center rounded-3xl border border-dashed border-blue-300 bg-gradient-to-b from-blue-50 via-white to-blue-50 px-6 py-8 text-center shadow-lg">
+              <div className="mx-auto mb-4 flex h-14 w-14 items-center justify-center rounded-2xl bg-blue-100 text-blue-600">
+                <span className="material-symbols-outlined text-3xl">auto_stories</span>
               </div>
-              <h1 className="mb-3 text-3xl font-semibold text-gray-900">Personalize your tutor in seconds</h1>
-              <p className="mx-auto max-w-2xl text-sm text-gray-600">
+              <h1 className="mb-1 text-2xl font-semibold text-gray-900">Personalize your tutor in seconds</h1>
+              <p className="mx-auto max-w-md text-sm text-gray-600">
                 Upload course notes, worksheets, or any study document. I’ll tailor explanations, quizzes, summaries,
                 and real-world examples to match the material you provide.
               </p>
@@ -373,7 +373,7 @@ const TutorPage = () => {
                   </button>
                 </div>
               )}
-              <div className="mt-10 flex flex-wrap justify-center gap-3">
+              <div className="mt-6 flex flex-wrap justify-center gap-3">
                 <button
                   onClick={triggerStudyFilePicker}
                   disabled={isImportingStudyFile}
@@ -400,7 +400,7 @@ const TutorPage = () => {
                   )}
                 </button>
               </div>
-              <dl className="mt-10 grid w-full max-w-2xl grid-cols-1 gap-4 text-left text-sm text-gray-500 sm:grid-cols-3">
+              <dl className="mt-8 grid w-full max-w-xl grid-cols-1 gap-4 text-left text-sm text-gray-500 sm:grid-cols-3">
                 <div className="rounded-xl bg-white/70 p-4 shadow-sm">
                   <dt className="font-semibold text-gray-700">Supported Files</dt>
                   <dd>PDF, DOCX, TXT (≤10&nbsp;MB)</dd>
