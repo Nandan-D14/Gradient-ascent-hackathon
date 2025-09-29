@@ -292,7 +292,11 @@ def delete_endpoint(file_id: str, mega: MegaService = Depends(get_mega_service))
 
     return JSONResponse({"message": "File deleted.", "file_id": file_id})
 
-
+@app.get("/health")
+def health_check() -> JSONResponse:
+    """Simple health check endpoint."""
+    return JSONResponse({"status": "ok"})
+    
 # ---------------------------------------------------------------------------
 # Local development entry-point
 # ---------------------------------------------------------------------------

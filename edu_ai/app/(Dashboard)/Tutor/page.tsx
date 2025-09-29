@@ -4,12 +4,29 @@
 import React, { useState, useRef, useEffect } from "react";
 import { ApiService } from "../../../lib/api";
 
+interface MegaFileItem {
+  id: string;
+  name: string | null;
+  sizeBytes: number | null;
+}
+
 interface Message {
   role: 'user' | 'assistant';
   content: string;
   timestamp: Date;
   type?: 'text' | 'quiz' | 'summary' | 'example';
 }
+
+const LIB_API_BASE_URL = process.env.NEXT_PUBLIC_MEGA_API_BASE_URL || "http://localhost:8000";
+
+const formatBytes = (bytes: number | null | undefined): string => {
+  if (bytes === null || bytes === undefined) return "—";
+  if (bytes === 0) return "0 B";
+  const units = ["B", "KB", "MB", "GB", "TB", "PB"];
+  const exponent = Math.min(Math.floor(Math.log(bytes) / Math.log(1024)), units.length - 1);
+  const value = bytes / Math.pow(1024, exponent);
+  return `${value.toFixed(value >= 10 || exponent === 0 ? 0 : 1)} ${units[exponent]}`;
+};
 
 interface QuizQuestion {
   question: string;
@@ -35,6 +52,12 @@ const TutorPage = () => {
   const [hasImportedStudyFile, setHasImportedStudyFile] = useState(false);
   const [isImportingStudyFile, setIsImportingStudyFile] = useState(false);
   const [isTranscriptGenerating, setIsTranscriptGenerating] = useState(false);
+  const [isLibraryModalOpen, setIsLibraryModalOpen] = useState(false);
+  const [libraryFiles, setLibraryFiles] = useState<MegaFileItem[]>([]);
+  const [libraryLoading, setLibraryLoading] = useState(false);
+  const [libraryError, setLibraryError] = useState<string | null>(null);
+  const [selectedLibraryIds, setSelectedLibraryIds] = useState<Set<string>>(new Set());
+  const [selectedLibraryFiles, setSelectedLibraryFiles] = useState<MegaFileItem[]>([]);
   const fileInputRef = useRef<HTMLInputElement | null>(null);
   const chatEndRef = useRef<HTMLDivElement>(null);
 
@@ -42,21 +65,32 @@ const TutorPage = () => {
     chatEndRef.current?.scrollIntoView({ behavior: 'smooth' });
   }, [chatMessages]);
 
-  useEffect(() => {
-    // Check backend connection on component mount
-    const checkConnection = async () => {
+  const openLibraryModal = async () => {
+    if (libraryLoading) return;
+    setIsLibraryModalOpen(true);
+    if (libraryFiles.length === 0) {
+      setLibraryLoading(true);
+      setLibraryError(null);
       try {
-        await ApiService.healthCheck();
-        setConnectionStatus('connected');
+        const response = await fetch(`${LIB_API_BASE_URL}/list`);
+        if (!response.ok) {
+          throw new Error(`Failed to fetch library files: ${response.statusText}`);
+        }
+        const data = await response.json();
+        const files: MegaFileItem[] = (data?.files || []).map((item: any) => ({
+          id: item.id,
+          name: item.name ?? "Untitled",
+          sizeBytes: typeof item.size_bytes === "number" ? item.size_bytes : null,
+        }));
+        setLibraryFiles(files);
       } catch (error) {
-        setConnectionStatus('disconnected');
-        console.error('Backend connection failed:', error);
+        const message = error instanceof Error ? error.message : "Unable to load library files.";
+        setLibraryError(message);
+      } finally {
+        setLibraryLoading(false);
       }
-    };
-    
-    checkConnection();
-  }, []);
-
+    }
+  };
   const triggerStudyFilePicker = () => {
     if (isImportingStudyFile) return;
     fileInputRef.current?.click();
@@ -65,14 +99,13 @@ const TutorPage = () => {
   const handleStudyFileChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     const file = event.target.files?.[0] ?? null;
     setSelectedStudyFile(file);
-    if (file) {
-      setHasImportedStudyFile(false);
-    }
+    setSelectedLibraryFiles([]);
+    setSelectedLibraryIds(new Set());
+    if (file) setHasImportedStudyFile(false);
   };
 
   const confirmStudyFileImport = async () => {
     if (!selectedStudyFile) return;
-
     setIsImportingStudyFile(true);
     try {
       await new Promise((resolve) => setTimeout(resolve, 700));
@@ -81,7 +114,7 @@ const TutorPage = () => {
       const welcomeMessage: Message = {
         role: 'assistant',
         content: `I've loaded "${selectedStudyFile.name}". Ask me anything about it!`,
-        timestamp: new Date()
+        timestamp: new Date(),
       };
       setChatMessages([welcomeMessage]);
       setQuizQuestions([]);
@@ -89,13 +122,68 @@ const TutorPage = () => {
       setSelectedAnswer(null);
       setShowQuizResult(false);
       setQuizScore({ correct: 0, total: 0 });
+      setSelectedLibraryFiles([]);
+      setSelectedLibraryIds(new Set());
     } finally {
       setIsImportingStudyFile(false);
     }
   };
+  const toggleLibrarySelection = (fileId: string) => {
+    setSelectedLibraryIds((prev) => {
+      const updated = new Set(prev);
+      if (updated.has(fileId)) {
+        updated.delete(fileId);
+      } else {
+        updated.add(fileId);
+      }
+      return updated;
+    });
+  };
+
+  const confirmLibrarySelection = () => {
+    if (selectedLibraryIds.size === 0) {
+      setIsLibraryModalOpen(false);
+      return;
+    }
+
+    const selectedItems = libraryFiles.filter((file) => selectedLibraryIds.has(file.id));
+    if (selectedItems.length > 0) {
+      setSelectedStudyFile(null);
+      setSelectedLibraryFiles(selectedItems);
+      setHasImportedStudyFile(true);
+      setActiveTab('chat');
+      const names = selectedItems.map((file) => file.name ?? file.id).join(", ");
+      const message: Message = {
+        role: 'assistant',
+        content: `I've linked the following Mega documents: ${names}.
+You can start asking questions about them!`,
+        timestamp: new Date(),
+      };
+      setChatMessages([message]);
+      setQuizQuestions([]);
+      setCurrentQuizIndex(0);
+      setSelectedAnswer(null);
+      setShowQuizResult(false);
+      setQuizScore({ correct: 0, total: 0 });
+    }
+
+    setSelectedLibraryIds(new Set());
+    setIsLibraryModalOpen(false);
+  };
+
+  const closeLibraryModal = () => {
+    setIsLibraryModalOpen(false);
+  };
+
+  const manageLibrarySelection = () => {
+    setSelectedLibraryIds(new Set(selectedLibraryFiles.map((file) => file.id)));
+    void openLibraryModal();
+  };
 
   const resetStudyFileImport = () => {
     setSelectedStudyFile(null);
+    setSelectedLibraryFiles([]);
+    setSelectedLibraryIds(new Set());
     if (fileInputRef.current) {
       fileInputRef.current.value = '';
     }
@@ -358,19 +446,46 @@ const TutorPage = () => {
                 Upload course notes, worksheets, or any study document. I’ll tailor explanations, quizzes, summaries,
                 and real-world examples to match the material you provide.
               </p>
-              {selectedStudyFile && (
+              {(selectedStudyFile || selectedLibraryFiles.length > 0) && (
                 <div className="mx-auto mt-6 flex w-full max-w-md items-center justify-between rounded-2xl border border-blue-100 bg-white px-4 py-3 text-sm font-medium text-blue-700 shadow-sm">
-                  <div className="flex items-center gap-2">
-                    <span className="material-symbols-outlined text-base">description</span>
-                    <span className="truncate" title={selectedStudyFile.name}>{selectedStudyFile.name}</span>
+                  <div className="flex flex-col gap-1">
+                    <div className="flex items-center gap-2">
+                      <span className="material-symbols-outlined text-base">description</span>
+                      {selectedStudyFile ? (
+                        <span className="truncate" title={selectedStudyFile.name}>{selectedStudyFile.name}</span>
+                      ) : (
+                        <span className="truncate" title={selectedLibraryFiles.map((file) => file.name ?? file.id).join(', ')}>
+                          {selectedLibraryFiles.length === 1
+                            ? selectedLibraryFiles[0].name ?? selectedLibraryFiles[0].id
+                            : `${selectedLibraryFiles.length} files selected`}
+                        </span>
+                      )}
+                    </div>
+                    {selectedLibraryFiles.length > 1 && (
+                      <div className="text-xs text-blue-500">
+                        {selectedLibraryFiles
+                          .slice(0, 3)
+                          .map((file) => file.name ?? file.id)
+                          .join(', ')}{selectedLibraryFiles.length > 3 ? '…' : ''}
+                      </div>
+                    )}
                   </div>
-                  <button
-                    onClick={handleRemoveSelectedStudyFile}
-                    className="text-xs font-semibold text-blue-600 transition-colors hover:text-blue-800"
-                    aria-label="Remove selected file"
-                  >
-                    Remove
-                  </button>
+                  {selectedStudyFile ? (
+                    <button
+                      onClick={handleRemoveSelectedStudyFile}
+                      className="text-xs font-semibold text-blue-600 transition-colors hover:text-blue-800"
+                      aria-label="Remove selected file"
+                    >
+                      Remove
+                    </button>
+                  ) : (
+                    <button
+                      onClick={manageLibrarySelection}
+                      className="text-xs font-semibold text-blue-600 transition-colors hover:text-blue-800"
+                    >
+                      Edit
+                    </button>
+                  )}
                 </div>
               )}
               <div className="mt-6 flex flex-wrap justify-center gap-3">
@@ -398,6 +513,13 @@ const TutorPage = () => {
                       Import & start learning
                     </>
                   )}
+                </button>
+                <button
+                  onClick={openLibraryModal}
+                  className="inline-flex items-center gap-2 rounded-full border border-blue-200 bg-white px-6 py-3 text-sm font-semibold text-blue-600 shadow-sm transition-colors hover:bg-blue-50"
+                >
+                  <span className="material-symbols-outlined text-base">library_books</span>
+                  Import from library
                 </button>
               </div>
               <dl className="mt-8 grid w-full max-w-xl grid-cols-1 gap-4 text-left text-sm text-gray-500 sm:grid-cols-3">
@@ -815,6 +937,107 @@ const TutorPage = () => {
           </div>
         </aside>
       </div>
+      {isLibraryModalOpen && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 p-4">
+          <div className="w-full max-w-3xl rounded-3xl bg-white shadow-2xl">
+            <div className="flex items-center justify-between border-b border-slate-200 px-6 py-4">
+              <div>
+                <h2 className="text-lg font-semibold text-gray-900">Import from library</h2>
+                <p className="text-xs text-gray-500">Select one or more files stored in Mega.</p>
+              </div>
+              <button
+                onClick={closeLibraryModal}
+                className="rounded-full p-1 text-gray-500 transition hover:bg-gray-100 hover:text-gray-700"
+              >
+                <span className="material-symbols-outlined text-xl">close</span>
+              </button>
+            </div>
+            <div className="max-h-[420px] overflow-y-auto px-6 py-4">
+              {libraryLoading ? (
+                <div className="flex items-center justify-center gap-2 py-16 text-sm text-gray-500">
+                  <span className="material-symbols-outlined animate-spin text-base text-blue-500">progress_activity</span>
+                  Loading library…
+                </div>
+              ) : libraryError ? (
+                <div className="rounded-2xl border border-rose-200 bg-rose-50 px-4 py-3 text-sm text-rose-600">
+                  <div className="flex items-center gap-2">
+                    <span className="material-symbols-outlined text-base">error</span>
+                    <span>{libraryError}</span>
+                  </div>
+                </div>
+              ) : libraryFiles.length === 0 ? (
+                <div className="flex flex-col items-center justify-center gap-2 py-16 text-sm text-gray-500">
+                  <span className="material-symbols-outlined text-4xl text-blue-300">folder_off</span>
+                  No files found in your Mega library yet.
+                </div>
+              ) : (
+                <div className="space-y-3">
+                  {libraryFiles.map((file) => {
+                    const isSelected = selectedLibraryIds.has(file.id);
+                    return (
+                      <div
+                        key={file.id}
+                        className={`flex items-center justify-between gap-3 rounded-2xl border px-4 py-3 shadow-sm transition ${
+                          isSelected ? 'border-blue-400 bg-blue-50' : 'border-slate-200 bg-white hover:border-blue-200'
+                        }`}
+                      >
+                        <div className="min-w-0 flex-1">
+                          <div className="flex items-center gap-2 text-sm font-semibold text-gray-900">
+                            <span className="material-symbols-outlined text-base text-blue-500">description</span>
+                            <span className="truncate" title={file.name ?? file.id}>
+                              {file.name ?? file.id}
+                            </span>
+                          </div>
+                          <div className="mt-1 flex items-center gap-3 text-xs text-gray-500">
+                            <span>{formatBytes(file.sizeBytes)}</span>
+                            <span className="truncate" title={file.id}>
+                              ID: {file.id}
+                            </span>
+                          </div>
+                        </div>
+                        <button
+                          onClick={() => toggleLibrarySelection(file.id)}
+                          className={`inline-flex items-center gap-2 rounded-full px-4 py-2 text-xs font-semibold transition ${
+                            isSelected
+                              ? 'bg-blue-600 text-white hover:bg-blue-700'
+                              : 'border border-blue-200 bg-white text-blue-600 hover:bg-blue-50'
+                          }`}
+                        >
+                          <span className="material-symbols-outlined text-base">{isSelected ? 'check' : 'add'}</span>
+                          {isSelected ? 'Added' : 'Add'}
+                        </button>
+                      </div>
+                    );
+                  })}
+                </div>
+              )}
+            </div>
+            <div className="flex flex-wrap items-center justify-between gap-3 border-t border-slate-200 px-6 py-4">
+              <div className="text-xs text-gray-500">
+                {selectedLibraryIds.size === 0
+                  ? 'Select files to link them with the tutor.'
+                  : `${selectedLibraryIds.size} file${selectedLibraryIds.size === 1 ? '' : 's'} selected`}
+              </div>
+              <div className="flex flex-wrap gap-2">
+                <button
+                  onClick={closeLibraryModal}
+                  className="inline-flex items-center gap-2 rounded-full border border-gray-200 bg-white px-5 py-2 text-xs font-semibold text-gray-600 transition hover:bg-gray-100"
+                >
+                  Cancel
+                </button>
+                <button
+                  onClick={confirmLibrarySelection}
+                  disabled={selectedLibraryIds.size === 0}
+                  className="inline-flex items-center gap-2 rounded-full bg-blue-600 px-5 py-2 text-xs font-semibold text-white transition enabled:hover:bg-blue-700 disabled:cursor-not-allowed disabled:bg-blue-300"
+                >
+                  <span className="material-symbols-outlined text-base">file_upload</span>
+                  Import selected files
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 };
