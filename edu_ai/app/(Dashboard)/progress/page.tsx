@@ -44,7 +44,7 @@ const ProgressPage = () => {
             <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
               <div className="md:col-span-1 bg-white rounded-lg shadow-sm p-6 flex flex-col justify-between">
                 <div>
-                  <h3 className="text-base font-bold text-gray-800">This week's focus score</h3>
+                  <h3 className="text-base font-bold text-gray-800">This week&apos;s focus score</h3>
                   <p className="text-4xl font-bold text-gray-900 mt-2">85</p>
                 </div>
                 <div className="w-full bg-center bg-no-repeat aspect-video bg-cover rounded-lg mt-4" style={{ backgroundImage: "url('https://lh3.googleusercontent.com/aida-public/AB6AXuCEqTzn-pHmrV6XMAqozKrTPJGbWBi7_8JOZV6OjGrDfS4qzDHZxSa9MlozxDqjBxu8VXpos2ca4vX3B4Nn1XjgD_kPjFjEs77rVUixQFCOLgODW_JEUmQbfZEIO47lMTJ3IuPZopL9dXNTQKfbEOI4poQNflQ6-1dojf3SEzVbCwb2Kl3AoxjZsxWDCZUkNoTvtwrs9iHFz-ErgcC1_jORbHWfDxGljolKRXqRYqnXRlLpZol9mXLrytD4aOKZSlbkoe5DyrsuwVA')" }}></div>
@@ -71,7 +71,7 @@ const ProgressPage = () => {
                     <div className="w-full xl:w-2/3">
                       <h4 className="text-lg font-bold text-gray-800 leading-tight tracking-tight">AI-Generated Progress Report</h4>
                       <p className="text-gray-600 text-sm leading-relaxed mt-2">
-                        This week, you've shown significant improvement in understanding complex concepts. Your focus score has increased by 15 points, and you've earned 2 new badges for consistent study habits. Keep up the great work!
+                        This week, you&apos;ve shown significant improvement in understanding complex concepts. Your focus score has increased by 15 points, and you&apos;ve earned 2 new badges for consistent study habits. Keep up the great work!
                       </p>
                     </div>
                   </div>

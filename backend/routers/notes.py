@@ -15,9 +15,8 @@ def generate(request: GenerateNotesRequest, user: dict = Depends(verify_token)):
     
     # Extract text from PDF
     pdf_reader = PyPDF2.PdfReader(io.BytesIO(file_bytes))
-    text = ""
-    for page in pdf_reader.pages:
-        text += page.extract_text()
+    # Optimization: Use join instead of string concatenation in loop for O(n) performance
+    text = "".join(page.extract_text() for page in pdf_reader.pages)
 
     # Generate notes using AI
     notes = generate_notes(text)

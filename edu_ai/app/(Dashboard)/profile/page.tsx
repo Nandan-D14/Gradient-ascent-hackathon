@@ -264,7 +264,7 @@ const ProfilePage = () => {
 
         {/* Contact Section */}
         <div className="mt-8 text-center">
-          <p className="text-gray-600 mb-4">Let's connect and build something amazing together!</p>
+          <p className="text-gray-600 mb-4">Let&apos;s connect and build something amazing together!</p>
           <div className="flex justify-center gap-4">
             <a href="#" className="w-10 h-10 bg-gray-200 rounded-lg flex items-center justify-center hover:bg-gray-300 transition-colors">
               <span className="text-gray-700">in</span>

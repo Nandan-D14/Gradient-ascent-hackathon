@@ -63,7 +63,7 @@ const FocusModePage = () => {
                 </div>
                 <div>
                   <p className="font-medium text-sm text-gray-800">Assignment Graded</p>
-                  <p className="text-sm text-gray-600">Your "Calculus II" assignment has been graded. Well done!</p>
+                  <p className="text-sm text-gray-600">Your &quot;Calculus II&quot; assignment has been graded. Well done!</p>
                   <span className="text-xs text-gray-400">2 minutes ago</span>
                 </div>
               </div>
@@ -73,7 +73,7 @@ const FocusModePage = () => {
                 </div>
                 <div>
                   <p className="font-medium text-sm text-gray-800">New Course Available</p>
-                  <p className="text-sm text-gray-600">"Introduction to Quantum Physics" is now open for enrollment.</p>
+                  <p className="text-sm text-gray-600">&quot;Introduction to Quantum Physics&quot; is now open for enrollment.</p>
                   <span className="text-xs text-gray-400">1 hour ago</span>
                 </div>
               </div>
@@ -83,7 +83,7 @@ const FocusModePage = () => {
                 </div>
                 <div>
                   <p className="font-medium text-sm text-gray-800">Study Reminder</p>
-                  <p className="text-sm text-gray-600">Don't forget your daily goal for "Organic Chemistry".</p>
+                  <p className="text-sm text-gray-600">Don&apos;t forget your daily goal for &quot;Organic Chemistry&quot;.</p>
                   <span className="text-xs text-gray-400">3 hours ago</span>
                 </div>
               </div>

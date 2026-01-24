@@ -77,7 +77,7 @@ const TutorPage = () => {
           throw new Error(`Failed to fetch library files: ${response.statusText}`);
         }
         const data = await response.json();
-        const files: MegaFileItem[] = (data?.files || []).map((item: any) => ({
+        const files: MegaFileItem[] = (data?.files || []).map((item: { id: string; name?: string; size_bytes?: number }) => ({
           id: item.id,
           name: item.name ?? "Untitled",
           sizeBytes: typeof item.size_bytes === "number" ? item.size_bytes : null,
