@@ -160,7 +160,7 @@ const NotesPage = () => {
       } else {
         setError(summaryData.message || "Failed to generate summary");
       }
-    } catch (err: any) {
+    } catch (err: unknown) {
       setError("Error uploading or summarizing file. If running locally, check CORS and backend server status.");
       console.error(err);
     }

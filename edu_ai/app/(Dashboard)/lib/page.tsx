@@ -42,14 +42,15 @@ const LibPage: React.FC = () => {
 				throw new Error(`Failed to fetch files: ${response.statusText}`);
 			}
 			const data = await response.json();
-			const items: FileItem[] = (data?.files || []).map((file: any) => ({
+			const items: FileItem[] = (data?.files || []).map((file: { id: string; name?: string; size_bytes?: number }) => ({
 				id: file.id,
 				name: file.name ?? "Untitled",
 				sizeBytes: typeof file.size_bytes === "number" ? file.size_bytes : null,
 			}));
 			setFiles(items);
-		} catch (err: any) {
-			setError(err?.message || "Unable to load files.");
+		} catch (err: unknown) {
+      const message = err instanceof Error ? err.message : "Unable to load files.";
+			setError(message);
 		} finally {
 			setIsFetching(false);
 		}
@@ -82,8 +83,9 @@ const LibPage: React.FC = () => {
 			}
 
 			await fetchFiles();
-		} catch (err: any) {
-			setError(err?.message || "Unable to upload file.");
+		} catch (err: unknown) {
+      const message = err instanceof Error ? err.message : "Unable to upload file.";
+			setError(message);
 		} finally {
 			setUploading(false);
 			resetFileInput();
@@ -101,8 +103,9 @@ const LibPage: React.FC = () => {
 				throw new Error(message || "Could not delete file.");
 			}
 			setFiles((prev) => prev.filter((file) => file.id !== id));
-		} catch (err: any) {
-			setError(err?.message || "Unable to delete file.");
+		} catch (err: unknown) {
+      const message = err instanceof Error ? err.message : "Unable to delete file.";
+			setError(message);
 		}
 	};
 

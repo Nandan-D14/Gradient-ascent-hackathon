@@ -18,7 +18,7 @@ export default function DashboardPage() {
                 <div className="mt-8 grid grid-cols-1 gap-8 lg:grid-cols-3">
                     {/* Today's Plan */}
                     <section className="lg:col-span-2">
-                        <h3 className="text-lg font-bold leading-tight tracking-[-0.015em] text-gray-900">Today's Plan</h3>
+                        <h3 className="text-lg font-bold leading-tight tracking-[-0.015em] text-gray-900">Today&apos;s Plan</h3>
                         <div className="mt-4 rounded-xl border border-gray-200 bg-white p-6">
                             <div className="flex flex-col items-start justify-between gap-4 sm:flex-row">
                                 <div className="flex-1">

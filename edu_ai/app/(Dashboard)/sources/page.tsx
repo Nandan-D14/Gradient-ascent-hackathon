@@ -161,7 +161,7 @@ const SourcesPage = () => {
           <div className="prose max-w-none">
             <div className="mb-8 flex items-center justify-between">
               <div>
-                <p className="text-sm text-[#a3a3a3]">Generated from: 'Advanced Calculus for Engineers.pdf'</p>
+                <p className="text-sm text-[#a3a3a3]">Generated from: &apos;Advanced Calculus for Engineers.pdf&apos;</p>
                 <h1 className="text-black text-4xl font-bold tracking-tight">AI-Generated Notes: Advanced Calculus</h1>
               </div>
               <div className="flex items-center gap-2">

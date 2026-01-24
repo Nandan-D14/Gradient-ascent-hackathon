@@ -95,7 +95,7 @@ export class ApiService {
   }
 
   // Exam Predictor
-  static async predictExam(data: any, token?: string) {
+  static async predictExam(data: Record<string, unknown>, token?: string) {
     return this.request('/exam/predict', {
       method: 'POST',
       body: JSON.stringify(data),
