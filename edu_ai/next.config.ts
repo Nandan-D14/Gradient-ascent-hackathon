@@ -9,9 +9,7 @@ const nextConfig: NextConfig = {
       },
     ];
   },
-  experimental: {
-    serverComponentsExternalPackages: ['@google/generative-ai'],
-  },
+  serverExternalPackages: ['@google/generative-ai'],
   webpack: (config: any) => {
     config.resolve.fallback = {
       ...config.resolve.fallback,
