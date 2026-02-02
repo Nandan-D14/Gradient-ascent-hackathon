@@ -58,6 +58,8 @@ def book_recommendations(interests: str) -> str:
     prompt = f"Recommend 5 study books for the following interests, with reasons: {interests}"
     return ask_gemini(prompt)
 
+import json
+
 def generate_quiz(topic: str, difficulty: str = "intermediate", num_questions: int = 5) -> str:
     prompt = f"""
     Create a {difficulty} level quiz about {topic} with {num_questions} multiple choice questions.
@@ -80,7 +82,21 @@ def generate_quiz(topic: str, difficulty: str = "intermediate", num_questions: i
     - Explanations are detailed and helpful
     - Difficulty matches the {difficulty} level
     """
-    return ask_gemini(prompt)
+    response = ask_gemini(prompt)
+    try:
+        json.loads(response)
+        return response
+    except json.JSONDecodeError:
+        return json.dumps({
+            "questions": [
+                {
+                    "question": "Sorry, I couldn't generate a quiz for this topic. Please try again.",
+                    "options": [],
+                    "correct": 0,
+                    "explanation": ""
+                }
+            ]
+        })
 
 def generate_topic_summary(topic: str, level: str = "intermediate") -> str:
     prompt = f"""
