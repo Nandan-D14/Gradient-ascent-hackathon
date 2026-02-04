@@ -5,6 +5,6 @@ from utils.auth import verify_token
 
 router = APIRouter()
 
-@router.get("/recommend")
+@router.post("/recommend")
 def recommend(request: BookRecommendationsRequest, user: dict = Depends(verify_token)):
     return {"recommendations": book_recommendations(f"Subject: {request.subject}, Level: {request.level}")}

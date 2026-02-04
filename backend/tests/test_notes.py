@@ -26,7 +26,7 @@ class TestNotes(unittest.TestCase):
                 from utils.auth import verify_token
             except ImportError:
                 # Fallback if imports fail due to complex dependencies
-                return
+                self.skipTest("Skipping notes test due to missing dependencies.")
 
             # Setup dependency override
             def mock_verify_token():
