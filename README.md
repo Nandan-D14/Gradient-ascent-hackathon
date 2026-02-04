@@ -72,7 +72,7 @@ Set `GEMINI_API_KEY` in your environment (for example in `backend/.env` and `edu
 
 - `POST /tutor/chat` - AI tutor chat
 - `POST /notes/generate` - Generate notes from PDFs
-- `GET /books/` - Get book recommendations
+- `POST /books/recommend` - Get book recommendations
 - `POST /exam/predict` - Exam prediction
 - `GET /focus/session` - Focus mode session
 - `GET /sources/` - Learning sources
