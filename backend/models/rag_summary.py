@@ -1,7 +1,12 @@
+import os
 from langchain.chains import RetrievalQA
 from langchain_google_genai import ChatGoogleGenerativeAI
 from langchain_community.vectorstores import FAISS
 from langchain_huggingface import HuggingFaceEmbeddings
+
+api_key = os.getenv("GEMINI_API_KEY")
+if not api_key:
+    raise RuntimeError("GEMINI_API_KEY environment variable is required.")
 
 
 # Load embedding model
@@ -13,7 +18,7 @@ vectorstore = FAISS.load_local("pdf_index", embedding_model, allow_dangerous_des
 # Load Gemini LLM (Google Gemini)
 llm = ChatGoogleGenerativeAI(
     model="gemini-pro",
-    google_api_key="AIzaSyDo3dxn5yjUwpRR_qw2ev0_nnjH-y0J_Hk"
+    google_api_key=api_key
 )
 
 # Setup retriever

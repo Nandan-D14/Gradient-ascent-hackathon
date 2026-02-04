@@ -47,7 +47,7 @@ start-frontend.bat
 
 ## Environment Setup 🔧
 
-The Gemini API key is already configured. For additional features, you may need:
+Set `GEMINI_API_KEY` in your environment (for example in `backend/.env` and `edu_ai/.env.local`). For additional features, you may need:
 
 - Google OAuth credentials (for file uploads)
 - Firebase project ID (for authentication)

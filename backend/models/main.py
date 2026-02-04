@@ -8,6 +8,13 @@ import os
 import sys
 from pathlib import Path
 
+def get_gemini_api_key():
+    """Fetch Gemini API key from the environment."""
+    api_key = os.getenv("GEMINI_API_KEY")
+    if not api_key:
+        raise RuntimeError("GEMINI_API_KEY environment variable is required.")
+    return api_key
+
 def check_dependencies():
     """Check if all required dependencies are installed."""
     try:
@@ -73,13 +80,15 @@ def interactive_qa():
         from langchain_google_genai import ChatGoogleGenerativeAI
         from langchain_community.vectorstores import FAISS
         from langchain_huggingface import HuggingFaceEmbeddings
+
+        api_key = get_gemini_api_key()
         
         # Load components
         embedding_model = HuggingFaceEmbeddings(model_name="sentence-transformers/all-MiniLM-L6-v2")
         vectorstore = FAISS.load_local("pdf_index", embedding_model, allow_dangerous_deserialization=True)
         llm = ChatGoogleGenerativeAI(
             model="gemini-1.5-flash",
-            google_api_key="AIzaSyDo3dxn5yjUwpRR_qw2ev0_nnjH-y0J_Hk"
+            google_api_key=api_key
         )
         retriever = vectorstore.as_retriever(search_kwargs={"k": 5})
         qa_chain = RetrievalQA.from_chain_type(

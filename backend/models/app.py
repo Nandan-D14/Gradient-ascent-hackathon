@@ -26,11 +26,18 @@ qa_chain = None
 vectorstore = None
 embedding_model = None
 
+def get_gemini_api_key():
+    api_key = os.getenv("GEMINI_API_KEY")
+    if not api_key:
+        raise RuntimeError("GEMINI_API_KEY environment variable is required.")
+    return api_key
+
 def initialize_rag_system():
     """Initialize the RAG system components"""
     global qa_chain, vectorstore, embedding_model
     
     try:
+        api_key = get_gemini_api_key()
         # Load embedding model
         embedding_model = HuggingFaceEmbeddings(model_name="sentence-transformers/all-MiniLM-L6-v2")
         
@@ -40,7 +47,7 @@ def initialize_rag_system():
         # Load Gemini LLM
         llm = ChatGoogleGenerativeAI(
             model="gemini-1.5-flash",
-            google_api_key="AIzaSyDo3dxn5yjUwpRR_qw2ev0_nnjH-y0J_Hk"
+            google_api_key=api_key
         )
         
         # Setup retriever
@@ -184,14 +191,15 @@ def upload_pdf():
             # Create new vector store
             if embedding_model is None:
                 embedding_model = HuggingFaceEmbeddings(model_name="sentence-transformers/all-MiniLM-L6-v2")
-            
+
             vectorstore = FAISS.from_documents(splits, embedding_model)
             vectorstore.save_local("pdf_index")
-            
+
             # Reinitialize QA chain
+            api_key = get_gemini_api_key()
             llm = ChatGoogleGenerativeAI(
                 model="gemini-1.5-flash",
-                google_api_key="AIzaSyDo3dxn5yjUwpRR_qw2ev0_nnjH-y0J_Hk"
+                google_api_key=api_key
             )
             retriever = vectorstore.as_retriever(search_kwargs={"k": 5})
             qa_chain = RetrievalQA.from_chain_type(
@@ -199,15 +207,15 @@ def upload_pdf():
                 retriever=retriever,
                 chain_type="stuff"
             )
-            
+
             # Clean up uploaded file
             os.remove(filepath)
-            
+
             return jsonify({
                 'status': 'success',
                 'message': 'PDF processed successfully'
             })
-            
+
         except Exception as e:
             return jsonify({
                 'status': 'error',
