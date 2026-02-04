@@ -12,7 +12,7 @@ echo Step 2: Setting up Environment Files...
 
 if not exist "backend\.env" (
     echo Creating backend/.env...
-    echo GEMINI_API_KEY=AIzaSyBeJBFjl0nhSkgZ6aI5DqzYWt2QKZu7cDU > backend\.env
+    echo GEMINI_API_KEY=your_gemini_api_key > backend\.env
     echo GOOGLE_CLIENT_ID=your_google_client_id >> backend\.env
     echo GOOGLE_CLIENT_SECRET=your_google_client_secret >> backend\.env
     echo GOOGLE_REFRESH_TOKEN=your_refresh_token >> backend\.env
@@ -22,7 +22,7 @@ if not exist "backend\.env" (
 
 if not exist "edu_ai\.env.local" (
     echo Creating edu_ai/.env.local...
-    echo GEMINI_API_KEY=AIzaSyBeJBFjl0nhSkgZ6aI5DqzYWt2QKZu7cDU > edu_ai\.env.local
+    echo GEMINI_API_KEY=your_gemini_api_key > edu_ai\.env.local
     echo NEXT_PUBLIC_API_URL=http://localhost:8000 >> edu_ai\.env.local
 )
 

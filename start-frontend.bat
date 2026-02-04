@@ -23,7 +23,7 @@ echo Checking environment file...
 if not exist ".env.local" (
     echo WARNING: .env.local not found
     echo Creating default environment file...
-    echo GEMINI_API_KEY=AIzaSyBeJBFjl0nhSkgZ6aI5DqzYWt2QKZu7cDU > .env.local
+    echo GEMINI_API_KEY=your_gemini_api_key > .env.local
     echo NEXT_PUBLIC_API_URL=http://localhost:8000 >> .env.local
 )
 
